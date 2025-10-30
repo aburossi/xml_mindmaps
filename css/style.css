@@ -1,17 +1,65 @@
-/* Basic Reset and Page Styling */
+/* --- 1. DESIGN SYSTEM (CSS Variables) --- */
+:root {
+    --bg-color: #0f0f23; /* Deep space blue */
+    --surface-color: #1a1a2e; /* Slightly lighter surface */
+    --primary-color: #00d9ff; /* Bright cyan */
+    --text-color: #e0e0e0;
+    --text-muted: #a0a0a0;
+    --link-color: #3a3a5a;
+    --node-fill: #1a1a2e;
+    --node-stroke: #00d9ff;
+    --collapsed-fill: #ff6b6b; /* Coral red for collapsed nodes */
+    --font-family: 'Inter', sans-serif;
+}
+
+/* --- 2. GLOBAL & LAYOUT STYLES --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
 body, html {
     margin: 0;
     padding: 0;
     height: 100%;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-    background-color: #f4f4f9;
-    overflow: hidden; /* Hide scrollbars */
+    font-family: var(--font-family);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+/* Header */
+header {
+    padding: 1rem 2rem;
+    background-color: var(--surface-color);
+    border-bottom: 1px solid var(--link-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10;
+    position: relative;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+header p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+/* Main Content Area */
+main {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 70px); /* Full height minus header */
 }
 
 #chart-container {
     width: 100%;
-    height: 100vh;
-    position: relative;
+    height: 100%;
 }
 
 #loading-message {
@@ -20,78 +68,88 @@ body, html {
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: 1.2em;
-    color: #555;
+    color: var(--text-muted);
 }
 
-/* SVG Styles */
+/* --- 3. CONTROLS & UI ELEMENTS --- */
+.controls {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    background-color: var(--surface-color);
+    border: 1px solid var(--link-color);
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 5;
+}
+
+.controls button {
+    background-color: var(--primary-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    font-family: var(--font-family);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.controls button:hover {
+    background-color: #00a8cc;
+}
+
+.controls button:active {
+    transform: scale(0.98);
+}
+
+/* --- 4. TOOLTIP --- */
+.tooltip {
+    position: absolute;
+    padding: 10px;
+    background: rgba(26, 26, 46, 0.95);
+    border: 1px solid var(--primary-color);
+    border-radius: 5px;
+    pointer-events: none;
+    font-size: 0.9rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 100;
+}
+
+/* --- 5. SVG & MINDMAP STYLES --- */
 svg {
     width: 100%;
     height: 100%;
-    background-color: #ffffff;
+    background-color: var(--bg-color);
 }
 
-/* Mindmap Element Styles */
 .node circle {
-    fill: #fff;
-    stroke: #007bff;
-    stroke-width: 2px;
     cursor: pointer;
-    transition: all 0.2s ease-in-out;
+    stroke-width: 2px;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.5));
 }
 
 .node circle:hover {
-    fill: #007bff;
+    filter: drop-shadow(0px 0px 8px var(--primary-color));
     stroke-width: 3px;
 }
 
 .node text {
     font-size: 12px;
-    font-family: sans-serif;
+    font-family: var(--font-family);
     text-anchor: middle;
     dominant-baseline: middle;
-    pointer-events: none; /* Allows mouse events to pass through to the circle */
-    user-select: none; /* Prevents text selection */
+    pointer-events: none;
+    user-select: none;
+    fill: var(--text-color);
 }
 
 .link {
     fill: none;
-    stroke: #ccc;
+    stroke: var(--link-color);
     stroke-width: 1.5px;
-}
-
-/* ... (keep all existing styles) ... */
-
-/* Mindmap Element Styles */
-.node circle {
-    fill: #fff;
-    stroke: #007bff;
-    stroke-width: 2px;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-}
-
-.node circle:hover {
-    fill: #007bff;
-    stroke-width: 3px;
-}
-
-/* Add this new style for collapsed nodes */
-.node.collapsed circle {
-    fill: #ffc107; /* A yellow/orange color to indicate it can be expanded */
-    stroke: #e0a800;
-}
-
-.node text {
-    font-size: 12px;
-    font-family: sans-serif;
-    text-anchor: middle;
-    dominant-baseline: middle;
-    pointer-events: none; /* Allows mouse events to pass through to the circle */
-    user-select: none; /* Prevents text selection */
-}
-
-.link {
-    fill: none;
-    stroke: #ccc;
-    stroke-width: 1.5px;
+    transition: stroke 0.3s ease;
 }
