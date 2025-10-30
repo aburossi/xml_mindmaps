@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let i = 0;
     const duration = 750;
-    const root;
+    let root; // <-- THIS IS THE FIX
 
     // Color scale for nodes based on depth
     const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
