@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mindmap title="Steuern (Schweiz)" created="2025-10-30T08:16:33.550Z" algorithm="corrected-x-level">
+  <node id="node_0" text="Steuern (Schweiz)" level="0">
+    <node id="node_1" text="Steuerpflicht" level="1">
+      <node id="node_6" text="Wer ist steuerpflichtig?" level="2">
+        <node id="node_24" text="Natürliche und juristische Personen mit Wohnsitz in CH (31. Dez.)" level="3">
+        </node>
+        <node id="node_25" text="Personen mit Liegenschaft/Geschäftsbetrieb in CH" level="3">
+        </node>
+        <node id="node_26" text="Volljährige ab 18. Altersjahr (erstmals eigene Erklärung)" level="3">
+        </node>
+      </node>
+      <node id="node_7" text="Spezialfälle" level="2">
+        <node id="node_27" text="Minderjährige (Vermögen bei Eltern, Einkommen z.T. steuerfrei)" level="3">
+        </node>
+        <node id="node_28" text="Erwerbstätige ohne CH-Wohnsitz / mit Aufenthaltsbewilligung (Quellensteuer)" level="3">
+        </node>
+        <node id="node_29" text="Gesellschaften/Personen im Ausland (für CH-Liegenschaften/Betriebe)" level="3">
+        </node>
+      </node>
+      <node id="node_8" text="Steuererklärung (Pflicht zur Einreichung)" level="2">
+      </node>
+    </node>
+    <node id="node_2" text="Zwecke der Steuern (Steuerzwecke)" level="1">
+      <node id="node_9" text="Fiskalpolitischer Zweck" level="2">
+        <node id="node_30" text="Finanzierung der Staatsausgaben" level="3">
+        </node>
+        <node id="node_31" text="Deckung des Bedarfs der Allgemeinheit" level="3">
+        </node>
+        <node id="node_32" text="Beispiele: Bildung, Verkehr, Militär" level="3">
+        </node>
+      </node>
+      <node id="node_10" text="Sozialpolitischer Zweck" level="2">
+        <node id="node_33" text="Förderung der Wohlfahrt" level="3">
+        </node>
+        <node id="node_34" text="Sozialer Ausgleich" level="3">
+        </node>
+        <node id="node_35" text="Beispiele: Spitäler, Fürsorge, Heime" level="3">
+        </node>
+      </node>
+      <node id="node_11" text="Wirtschaftpolitischer Zweck" level="2">
+        <node id="node_36" text="Schutz wirtschaftlicher Interessen" level="3">
+        </node>
+        <node id="node_37" text="Lenkung des Konsums/der Produktion" level="3">
+        </node>
+        <node id="node_38" text="Beispiele: Subventionen, Zölle, Tabaksteuer" level="3">
+        </node>
+      </node>
+    </node>
+    <node id="node_3" text="Steuerhoheit und Steuerarten" level="1">
+      <node id="node_12" text="Steuerhoheit (Erhobene Steuern)" level="2">
+        <node id="node_39" text="Bund" level="3">
+          <node id="node_72" text="Einkommenssteuer (Privatpersonen)" level="4">
+          </node>
+          <node id="node_73" text="Gewinnsteuer (Unternehmen)" level="4">
+          </node>
+          <node id="node_74" text="Verrechnungssteuer" level="4">
+          </node>
+          <node id="node_75" text="Mineralölsteuer" level="4">
+          </node>
+        </node>
+        <node id="node_40" text="Kantone / Gemeinden" level="3">
+          <node id="node_76" text="Einkommens- und Vermögenssteuer (Privatpersonen)" level="4">
+          </node>
+          <node id="node_77" text="Gewinn- und Kapitalsteuer (Firmen)" level="4">
+          </node>
+          <node id="node_78" text="Grundstückgewinnsteuer" level="4">
+          </node>
+          <node id="node_79" text="Motorfahrzeugssteuer" level="4">
+          </node>
+          <node id="node_80" text="Hundesteuer" level="4">
+          </node>
+        </node>
+      </node>
+      <node id="node_13" text="Direkte Steuern" level="2">
+        <node id="node_41" text="Erhebung auf Einkommen und Vermögen" level="3">
+        </node>
+        <node id="node_42" text="Abgestufte Tarife (Finanzkraft)" level="3">
+        </node>
+        <node id="node_43" text="Wichtige direkte Steuern: Einkommenssteuer, Vermögenssteuer, Erbschaftssteuer" level="3">
+        </node>
+        <node id="node_44" text="Quellensteuer" level="3">
+          <node id="node_81" text="Abzug direkt vom Lohn (Quelle)" level="4">
+          </node>
+          <node id="node_82" text="Für Ausländer ohne Niederlassungsbewilligung (C)" level="4">
+          </node>
+        </node>
+      </node>
+      <node id="node_14" text="Indirekte Steuern" level="2">
+        <node id="node_45" text="Erhebung bei Kauf/Verbrauch, Anlässen, Besitz" level="3">
+        </node>
+        <node id="node_46" text="Einheitlicher Steuertarif" level="3">
+        </node>
+        <node id="node_47" text="Wichtige indirekte Steuern: MWST, Tabaksteuer, Mineralölsteuer" level="3">
+        </node>
+      </node>
+    </node>
+    <node id="node_4" text="Finanzen des Bundes (2022)" level="1">
+      <node id="node_15" text="Wichtigste Einnahmen (fiskalisch)" level="2">
+        <node id="node_48" text="Direkte Bundessteuer (34,0 %)" level="3">
+        </node>
+        <node id="node_49" text="Mehrwertsteuer (30,5 %)" level="3">
+        </node>
+        <node id="node_50" text="Verrechnungssteuer (9,2 %)" level="3">
+        </node>
+      </node>
+      <node id="node_16" text="Grösste Ausgabenposten" level="2">
+        <node id="node_51" text="Soziale Wohlfahrt (31,5 %)" level="3">
+        </node>
+        <node id="node_52" text="Finanzen und Steuern (14,6 %)" level="3">
+        </node>
+        <node id="node_53" text="Verkehr (13,4 %)" level="3">
+        </node>
+      </node>
+      <node id="node_17" text="Gesamteinnahmen: 77 122 Mio. Fr." level="2">
+      </node>
+      <node id="node_18" text="Gesamtausgaben: 78 024 Mio. Fr." level="2">
+      </node>
+    </node>
+    <node id="node_5" text="Spezialthemen und Verfahren" level="1">
+      <node id="node_19" text="Steuerprogression" level="2">
+        <node id="node_54" text="Steigender Steuersatz bei steigendem Einkommen/Vermögen" level="3">
+        </node>
+        <node id="node_55" text="Ziel: Soziale Gerechtigkeit und Umverteilung" level="3">
+        </node>
+        <node id="node_56" text="Gegensatz: Flat Rate Tax (proportionaler Steuersatz)" level="3">
+        </node>
+      </node>
+      <node id="node_20" text="Verrechnungssteuer (VStG)" level="2">
+        <node id="node_57" text="Mittel zur Verhinderung der Steuerhinterziehung" level="3">
+        </node>
+        <node id="node_58" text="35 % Abzug auf Kapitalerträgen (Zinsen, Dividenden, Lotteriegewinne &gt; 1000 Fr.)" level="3">
+        </node>
+        <node id="node_59" text="Rückerstattung bei korrekter Deklaration" level="3">
+        </node>
+      </node>
+      <node id="node_21" text="Mehrwertsteuer (MWST)" level="2">
+        <node id="node_60" text="Verbrauchssteuer auf Waren/Dienstleistungen" level="3">
+        </node>
+        <node id="node_61" text="Normaler Satz: 7,7 %" level="3">
+        </node>
+        <node id="node_62" text="Reduzierte Sätze (2,5 % tägl. Bedarf; 3,7 % Hotels)" level="3">
+        </node>
+        <node id="node_63" text="Gestaffelte Erhebung auf Mehrwert" level="3">
+        </node>
+      </node>
+      <node id="node_22" text="Steuererklärung Ausfüllen" level="2">
+        <node id="node_64" text="Selbstdeklaration (wahrheitsgetreu/vollständig)" level="3">
+        </node>
+        <node id="node_65" text="Benötigte Unterlagen: Lohnausweis (zwingend), Bankauszüge, Belege, Wegleitung" level="3">
+        </node>
+        <node id="node_66" text="Aufbau: Personalien -&gt; Einkommen -&gt; Abzüge -&gt; Vermögen -&gt; Steuerbares Einkommen/Vermögen" level="3">
+        </node>
+        <node id="node_67" text="Steuerhinterziehung vs. Steuerbetrug (Urkundenfälschung)" level="3">
+        </node>
+      </node>
+      <node id="node_23" text="Steuerverfahren" level="2">
+        <node id="node_68" text="Zwei Rechnungen: Direkte Bundessteuer &amp; Kantons-/Gemeindesteuer" level="3">
+        </node>
+        <node id="node_69" text="Fristerstreckung möglich" level="3">
+        </node>
+        <node id="node_70" text="Folge bei Nicht-Einreichung: Ordnungsbusse &amp; Schätzung durch Behörde" level="3">
+        </node>
+        <node id="node_71" text="Stundung (Aufschiebung) mit Verzugszinsen" level="3">
+        </node>
+      </node>
+    </node>
+  </node>
+</mindmap>
