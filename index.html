@@ -7,9 +7,22 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="chart-container">
-        <div id="loading-message">Loading mindmap data...</div>
-    </div>
+    <header>
+        <div>
+            <h1>Steuern (Schweiz)</h1>
+            <p>An interactive exploration of the Swiss tax system.</p>
+        </div>
+    </header>
+
+    <main>
+        <div id="chart-container">
+            <div id="loading-message">Loading mindmap data...</div>
+        </div>
+        <div class="controls">
+            <button id="reset-zoom">Reset Zoom</button>
+        </div>
+        <div class="tooltip"></div>
+    </main>
 
     <!-- D3.js Library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
