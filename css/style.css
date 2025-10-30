@@ -1,0 +1,60 @@
+/* Basic Reset and Page Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f4f4f9;
+    overflow: hidden; /* Hide scrollbars */
+}
+
+#chart-container {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+}
+
+#loading-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.2em;
+    color: #555;
+}
+
+/* SVG Styles */
+svg {
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+/* Mindmap Element Styles */
+.node circle {
+    fill: #fff;
+    stroke: #007bff;
+    stroke-width: 2px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.node circle:hover {
+    fill: #007bff;
+    stroke-width: 3px;
+}
+
+.node text {
+    font-size: 12px;
+    font-family: sans-serif;
+    text-anchor: middle;
+    dominant-baseline: middle;
+    pointer-events: none; /* Allows mouse events to pass through to the circle */
+    user-select: none; /* Prevents text selection */
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 1.5px;
+}
