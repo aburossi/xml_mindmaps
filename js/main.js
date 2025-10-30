@@ -3,29 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const container = d3.select('#chart-container');
     const tooltip = d3.select('.tooltip');
     const controls = d3.select('.controls');
-    
+
     const width = window.innerWidth;
-    const height = window.innerHeight - 70; // Adjust for header height
+    const height = window.innerHeight - 70; // Adjust for header
 
     let i = 0;
     const duration = 750;
-    let root; // <-- THIS IS THE FIX
-
-    // Color scale for nodes based on depth
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    let root;
+    const zoom = d3.zoom();
 
     // --- 2. SVG & ZOOM SETUP ---
     const svg = container.append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`);
 
+    // Define gradients for nodes
+    const defs = svg.append('defs');
+    const gradients = ['#58a6ff', '#a371f7', '#ffa657', '#7ee787', '#ff7b72'];
+    gradients.forEach((color, i) => {
+        const gradient = defs.append('linearGradient')
+            .attr('id', `node-gradient-${i}`)
+            .attr('x1', '0%').attr('y1', '0%')
+            .attr('x2', '100%').attr('y2', '100%');
+        gradient.append('stop').attr('offset', '0%').style('stop-color', color).style('stop-opacity', 0.8);
+        gradient.append('stop').attr('offset', '100%').style('stop-color', color).style('stop-opacity', 0.4);
+    });
+
     const g = svg.append('g');
 
-    const zoom = d3.zoom()
-        .scaleExtent([0.2, 4])
-        .on('zoom', (event) => {
-            g.attr('transform', event.transform);
-        });
-
+    zoom.scaleExtent([0.3, 3]).on('zoom', (event) => {
+        g.attr('transform', event.transform);
+    });
     svg.call(zoom);
 
     // --- 3. DATA LOADING & INITIAL RENDER ---
@@ -46,11 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const hierarchyData = xmlToHierarchy(xmlRoot);
             root = d3.hierarchy(hierarchyData);
             root.x0 = height / 2;
-            root.y0 = 0;
+            root.y0 = width / 2; // Center the root
 
             // Initial state: collapse all but the first level
             root.children.forEach(collapse);
             update(root);
+            centerNode(root); // Center the view on the root initially
         })
         .catch(error => {
             console.error('Error loading or parsing XML:', error);
@@ -59,10 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 4. UI CONTROLS ---
     controls.select('#reset-zoom').on('click', () => {
-        svg.transition().duration(750).call(
-            zoom.transform,
-            d3.zoomIdentity
-        );
+        centerNode(root);
+    });
+    
+    controls.select('#expand-all').on('click', () => {
+        expand(root);
+        update(root);
+        centerNode(root);
     });
 
     // --- 5. CORE INTERACTIVE FUNCTIONS ---
@@ -71,6 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
             d._children = d.children;
             d._children.forEach(collapse);
             d.children = null;
+        }
+    }
+
+    function expand(d) {
+        if (d._children) {
+            d.children = d._children;
+            d.children.forEach(expand);
+            d._children = null;
         }
     }
 
@@ -83,76 +102,63 @@ document.addEventListener('DOMContentLoaded', () => {
             d._children = null;
         }
         update(d);
+        centerNode(d); // Focus and zoom on the clicked node
     }
 
-    function showTooltip(event, d) {
-        const fullText = d.data.name;
-        const displayText = fullText.length > 25 ? fullText.substring(0, 22) + '...' : fullText;
-        
-        if (fullText !== displayText) {
-            tooltip.transition().duration(200).style('opacity', .9);
-            tooltip.html(fullText)
-                .style('left', (event.pageX + 10) + 'px')
-                .style('top', (event.pageY - 28) + 'px');
-        }
-    }
-
-    function hideTooltip() {
-        tooltip.transition().duration(500).style('opacity', 0);
+    function centerNode(source) {
+        const scale = zoom.scaleExtent()[1]; // Zoom in
+        const translate = [width / 2 - source.y0 * scale, height / 2 - source.x0 * scale];
+        svg.transition().duration(duration).call(
+            zoom.transform,
+            d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+        );
     }
 
     // --- 6. MAIN UPDATE FUNCTION ---
     function update(source) {
-        const treeLayout = d3.tree().size([height - 100, width - 200]);
+        // Use a tree layout for a top-down structure
+        const treeLayout = d3.tree().size([height - 100, width - 400]);
         const treeData = treeLayout(root);
         const nodes = treeData.descendants();
         const links = treeData.links();
 
+        // Normalize for fixed-depth
         nodes.forEach(d => { d.y = d.depth * 250; });
 
-        // --- NODES ---
+        // --- NODES UPDATE ---
         const node = g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++i));
 
         const nodeEnter = node.enter().append('g')
-            .attr('class', 'node')
+            .attr('class', d => 'node' + (d._children ? ' collapsed' : ''))
             .attr('transform', d => `translate(${source.y0}, ${source.x0})`)
-            .on('click', click)
-            .on('mouseover', showTooltip)
-            .on('mouseout', hideTooltip);
+            .on('click', click);
 
-        nodeEnter.append('circle')
-            .attr('r', 1e-6);
+        // Use foreignObject to render HTML inside SVG
+        nodeEnter.append('foreignObject')
+            .attr('width', 180)
+            .attr('height', 50)
+            .attr('x', -90) // Center the foreignObject
+            .attr('y', -25)
+            .append('xhtml:div')
+            .attr('class', 'node-text-content')
+            .html(d => d.data.name);
 
-        nodeEnter.append('text')
-            .attr('dy', '.35em')
-            .attr('x', d => d.children || d._children ? -13 : 13)
-            .attr('text-anchor', d => d.children || d._children ? 'end' : 'start')
-            .text(d => {
-                const name = d.data.name;
-                return name.length > 25 ? name.substring(0, 22) + '...' : name;
-            });
-
+        // Transition nodes to their new position.
         const nodeUpdate = nodeEnter.merge(node);
 
         nodeUpdate.transition()
             .duration(duration)
-            .attr('transform', d => `translate(${d.y}, ${d.x})`);
+            .attr('transform', d => `translate(${d.y}, ${d.x})`)
+            .attr('class', d => 'node' + (d._children ? ' collapsed' : ''));
 
-        nodeUpdate.select('circle')
-            .attr('r', 8)
-            .style('fill', d => d._children ? getComputedStyle(document.documentElement).getPropertyValue('--collapsed-fill') : colorScale(d.depth))
-            .style('stroke', d => d._children ? getComputedStyle(document.documentElement).getPropertyValue('--collapsed-fill') : getComputedStyle(document.documentElement).getPropertyValue('--node-stroke'));
-
+        // Remove any exiting nodes
         const nodeExit = node.exit().transition()
             .duration(duration)
             .attr('transform', d => `translate(${source.y}, ${source.x})`)
             .remove();
 
-        nodeExit.select('circle').attr('r', 1e-6);
-        nodeExit.select('text').style('fill-opacity', 1e-6);
-
-        // --- LINKS ---
+        // --- LINKS UPDATE ---
         const link = g.selectAll('path.link')
             .data(links, d => d.target.id);
 
@@ -177,12 +183,14 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .remove();
 
+        // Store the old positions for transition.
         nodes.forEach(d => {
             d.x0 = d.x;
             d.y0 = d.y;
         });
     }
 
+    // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
         return `M ${s.y} ${s.x}
                 C ${(s.y + d.y) / 2} ${s.x},
