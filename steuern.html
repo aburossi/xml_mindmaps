@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steuern (Schweiz) - Interactive Mindmap</title>
+    <style>
+        /* --- 1. DESIGN SYSTEM (CSS Variables) --- */
+        :root {
+            --bg-color: #0d1117; /* GitHub's dark */
+            --surface-color: #161b22;
+            --primary-color: #58a6ff;
+            --text-color: #c9d1d9;
+            --text-muted: #8b949e;
+            --link-color: #30363d;
+            --border-color: #21262d;
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+        }
+
+        /* --- 2. GLOBAL & LAYOUT STYLES --- */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 1rem 2rem;
+            background-color: var(--surface-color);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+            position: relative;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Main Content Area */
+        main {
+            position: relative;
+            width: 100%;
+            height: calc(100vh - 70px);
+        }
+
+        #chart-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #loading-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.2em;
+            color: var(--text-muted);
+        }
+
+        /* --- 3. CONTROLS & UI ELEMENTS --- */
+        .controls {
+            position: absolute;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            z-index: 5;
+        }
+
+        .controls button {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+            border: none;
+            padding: 0.7rem 1.2rem;
+            border-radius: 6px;
+            font-family: var(--font-family);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-right: 0.5rem;
+        }
+
+        .controls button:last-child {
+            margin-right: 0;
+        }
+
+        .controls button:hover {
+            background-color: #79c0ff;
+        }
+
+        .controls button:active {
+            transform: scale(0.98);
+        }
+
+        /* --- 4. SVG & MINDMAP STYLES --- */
+        svg {
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+        }
+
+        /* Define gradients for nodes */
+        .node-gradient-0 { stop-color: #58a6ff; }
+        .node-gradient-1 { stop-color: #a371f7; }
+        .node-gradient-2 { stop-color: #ffa657; }
+        .node-gradient-3 { stop-color: #7ee787; }
+        .node-gradient-4 { stop-color: #ff7b72; }
+
+        .link {
+            fill: none;
+            stroke: var(--link-color);
+            stroke-width: 2px;
+        }
+
+        /* Node styles */
+        .node {
+            cursor: pointer;
+        }
+
+        .node rect {
+            fill: url(#node-gradient-1);
+            stroke: var(--border-color);
+            stroke-width: 1.5px;
+            rx: 8;
+            ry: 8;
+            filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.4));
+            transition: all 0.3s ease;
+        }
+
+        .node.collapsed rect {
+            fill: url(#node-gradient-0);
+        }
+
+        .node:hover rect {
+            filter: drop-shadow(0px 6px 12px rgba(88, 166, 255, 0.4));
+            stroke: var(--primary-color);
+        }
+
+        .node div {
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: center;
+            color: var(--text-color);
+            white-space: normal;
+            word-wrap: break-word;
+            width: 160px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <h1>Steuern (Schweiz)</h1>
+            <p>An interactive exploration of the Swiss tax system.</p>
+        </div>
+    </header>
+
+    <main>
+        <div id="chart-container">
+            <div id="loading-message">Loading mindmap data...</div>
+        </div>
+        <div class="controls">
+            <button id="reset-zoom">Reset View</button>
+            <button id="expand-all">Expand All</button>
+        </div>
+    </main>
+
+    <!-- D3.js Library -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <!-- Main Application Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- 1. SETUP & CONFIGURATION ---
+            const container = d3.select('#chart-container');
+            const controls = d3.select('.controls');
+
+            const width = window.innerWidth;
+            const height = window.innerHeight - 70;
+
+            let i = 0;
+            const duration = 750;
+            let root;
+            const zoom = d3.zoom();
+
+            // --- 2. SVG & ZOOM SETUP ---
+            const svg = container.append('svg')
+                .attr('viewBox', `0 0 ${width} ${height}`);
+
+            const defs = svg.append('defs');
+            const gradients = ['#58a6ff', '#a371f7', '#ffa657', '#7ee787', '#ff7b72'];
+            gradients.forEach((color, i) => {
+                const gradient = defs.append('linearGradient')
+                    .attr('id', `node-gradient-${i}`)
+                    .attr('x1', '0%').attr('y1', '0%')
+                    .attr('x2', '100%').attr('y2', '100%');
+                gradient.append('stop').attr('offset', '0%').style('stop-color', color).style('stop-opacity', 0.8);
+                gradient.append('stop').attr('offset', '100%').style('stop-color', color).style('stop-opacity', 0.4);
+            });
+
+            const g = svg.append('g');
+
+            zoom.scaleExtent([0.3, 3]).on('zoom', (event) => {
+                g.attr('transform', event.transform);
+            });
+            svg.call(zoom);
+
+            // --- 3. DATA (Embedded Directly) ---
+            // The XML data has been converted to a JSON object for easy use.
+            const mindmapData = {
+                "name": "Steuern (Schweiz)",
+                "children": [
+                    {
+                        "name": "Steuerpflicht",
+                        "children": [
+                            {
+                                "name": "Wer ist steuerpflichtig?",
+                                "children": [
+                                    { "name": "Natürliche und juristische Personen mit Wohnsitz in CH (31. Dez.)" },
+                                    { "name": "Personen mit Liegenschaft/Geschäftsbetrieb in CH" },
+                                    { "name": "Volljährige ab 18. Altersjahr (erstmals eigene Erklärung)" }
+                                ]
+                            },
+                            {
+                                "name": "Spezialfälle",
+                                "children": [
+                                    { "name": "Minderjährige (Vermögen bei Eltern, Einkommen z.T. steuerfrei)" },
+                                    { "name": "Erwerbstätige ohne CH-Wohnsitz / mit Aufenthaltsbewilligung (Quellensteuer)" },
+                                    { "name": "Gesellschaften/Personen im Ausland (für CH-Liegenschaften/Betriebe)" }
+                                ]
+                            },
+                            { "name": "Steuererklärung (Pflicht zur Einreichung)" }
+                        ]
+                    },
+                    {
+                        "name": "Zwecke der Steuern (Steuerzwecke)",
+                        "children": [
+                            {
+                                "name": "Fiskalpolitischer Zweck",
+                                "children": [
+                                    { "name": "Finanzierung der Staatsausgaben" },
+                                    { "name": "Deckung des Bedarfs der Allgemeinheit" },
+                                    { "name": "Beispiele: Bildung, Verkehr, Militär" }
+                                ]
+                            },
+                            {
+                                "name": "Sozialpolitischer Zweck",
+                                "children": [
+                                    { "name": "Förderung der Wohlfahrt" },
+                                    { "name": "Sozialer Ausgleich" },
+                                    { "name": "Beispiele: Spitäler, Fürsorge, Heime" }
+                                ]
+                            },
+                            {
+                                "name": "Wirtschaftpolitischer Zweck",
+                                "children": [
+                                    { "name": "Schutz wirtschaftlicher Interessen" },
+                                    { "name": "Lenkung des Konsums/der Produktion" },
+                                    { "name": "Beispiele: Subventionen, Zölle, Tabaksteuer" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Steuerhoheit und Steuerarten",
+                        "children": [
+                            {
+                                "name": "Steuerhoheit (Erhobene Steuern)",
+                                "children": [
+                                    {
+                                        "name": "Bund",
+                                        "children": [
+                                            { "name": "Einkommenssteuer (Privatpersonen)" },
+                                            { "name": "Gewinnsteuer (Unternehmen)" },
+                                            { "name": "Verrechnungssteuer" },
+                                            { "name": "Mineralölsteuer" }
+                                        ]
+                                    },
+                                    {
+                                        "name": "Kantone / Gemeinden",
+                                        "children": [
+                                            { "name": "Einkommens- und Vermögenssteuer (Privatpersonen)" },
+                                            { "name": "Gewinn- und Kapitalsteuer (Firmen)" },
+                                            { "name": "Grundstückgewinnsteuer" },
+                                            { "name": "Motorfahrzeugssteuer" },
+                                            { "name": "Hundesteuer" }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "Direkte Steuern",
+                                "children": [
+                                    { "name": "Erhebung auf Einkommen und Vermögen" },
+                                    { "name": "Abgestufte Tarife (Finanzkraft)" },
+                                    { "name": "Wichtige direkte Steuern: Einkommenssteuer, Vermögenssteuer, Erbschaftssteuer" },
+                                    {
+                                        "name": "Quellensteuer",
+                                        "children": [
+                                            { "name": "Abzug direkt vom Lohn (Quelle)" },
+                                            { "name": "Für Ausländer ohne Niederlassungsbewilligung (C)" }
+                                        ]
+                                    }
+                                ]
+                            },
+                            {
+                                "name": "Indirekte Steuern",
+                                "children": [
+                                    { "name": "Erhebung bei Kauf/Verbrauch, Anlässen, Besitz" },
+                                    { "name": "Einheitlicher Steuertarif" },
+                                    { "name": "Wichtige indirekte Steuern: MWST, Tabaksteuer, Mineralölsteuer" }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "name": "Finanzen des Bundes (2022)",
+                        "children": [
+                            {
+                                "name": "Wichtigste Einnahmen (fiskalisch)",
+                                "children": [
+                                    { "name": "Direkte Bundessteuer (34,0 %)" },
+                                    { "name": "Mehrwertsteuer (30,5 %)" },
+                                    { "name": "Verrechnungssteuer (9,2 %)" }
+                                ]
+                            },
+                            {
+                                "name": "Grösste Ausgabenposten",
+                                "children": [
+                                    { "name": "Soziale Wohlfahrt (31,5 %)" },
+                                    { "name": "Finanzen und Steuern (14,6 %)" },
+                                    { "name": "Verkehr (13,4 %)" }
+                                ]
+                            },
+                            { "name": "Gesamteinnahmen: 77 122 Mio. Fr." },
+                            { "name": "Gesamtausgaben: 78 024 Mio. Fr." }
+                        ]
+                    },
+                    {
+                        "name": "Spezialthemen und Verfahren",
+                        "children": [
+                            {
+                                "name": "Steuerprogression",
+                                "children": [
+                                    { "name": "Steigender Steuersatz bei steigendem Einkommen/Vermögen" },
+                                    { "name": "Ziel: Soziale Gerechtigkeit und Umverteilung" },
+                                    { "name": "Gegensatz: Flat Rate Tax (proportionaler Steuersatz)" }
+                                ]
+                            },
+                            {
+                                "name": "Verrechnungssteuer (VStG)",
+                                "children": [
+                                    { "name": "Mittel zur Verhinderung der Steuerhinterziehung" },
+                                    { "name": "35 % Abzug auf Kapitalerträgen (Zinsen, Dividenden, Lotteriegewinne > 1000 Fr.)" },
+                                    { "name": "Rückerstattung bei korrekter Deklaration" }
+                                ]
+                            },
+                            {
+                                "name": "Mehrwertsteuer (MWST)",
+                                "children": [
+                                    { "name": "Verbrauchssteuer auf Waren/Dienstleistungen" },
+                                    { "name": "Normaler Satz: 7,7 %" },
+                                    { "name": "Reduzierte Sätze (2,5 % tägl. Bedarf; 3,7 % Hotels)" },
+                                    { "name": "Gestaffelte Erhebung auf Mehrwert" }
+                                ]
+                            },
+                            {
+                                "name": "Steuererklärung Ausfüllen",
+                                "children": [
+                                    { "name": "Selbstdeklaration (wahrheitsgetreu/vollständig)" },
+                                    { "name": "Benötigte Unterlagen: Lohnausweis (zwingend), Bankauszüge, Belege, Wegleitung" },
+                                    { "name": "Aufbau: Personalien -> Einkommen -> Abzüge -> Vermögen -> Steuerbares Einkommen/Vermögen" },
+                                    { "name": "Steuerhinterziehung vs. Steuerbetrug (Urkundenfälschung)" }
+                                ]
+                            },
+                            {
+                                "name": "Steuerverfahren",
+                                "children": [
+                                    { "name": "Zwei Rechnungen: Direkte Bundessteuer & Kantons-/Gemeindesteuer" },
+                                    { "name": "Fristerstreckung möglich" },
+                                    { "name": "Folge bei Nicht-Einreichung: Ordnungsbusse & Schätzung durch Behörde" },
+                                    { "name": "Stundung (Aufschiebung) mit Verzugszinsen" }
+                                ]
+                            }
+                        ]
+                    }
+                ]
+            };
+
+            // --- 4. INITIAL RENDER ---
+            d3.select('#loading-message').style('display', 'none');
+            root = d3.hierarchy(mindmapData);
+            root.x0 = height / 2;
+            root.y0 = width / 2;
+
+            root.children.forEach(collapse);
+            update(root);
+            centerNode(root);
+
+            // --- 5. UI CONTROLS ---
+            controls.select('#reset-zoom').on('click', () => {
+                centerNode(root);
+            });
+            
+            controls.select('#expand-all').on('click', () => {
+                expand(root);
+                update(root);
+                centerNode(root);
+            });
+
+            // --- 6. CORE INTERACTIVE FUNCTIONS ---
+            function collapse(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d._children.forEach(collapse);
+                    d.children = null;
+                }
+            }
+
+            function expand(d) {
+                if (d._children) {
+                    d.children = d._children;
+                    d.children.forEach(expand);
+                    d._children = null;
+                }
+            }
+
+            function click(event, d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
+                update(d);
+                centerNode(d);
+            }
+
+            function centerNode(source) {
+                const scale = 1.2; // A more moderate zoom level
+                const translate = [width / 2 - source.y0 * scale, height / 2 - source.x0 * scale];
+                svg.transition().duration(duration).call(
+                    zoom.transform,
+                    d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+                );
+            }
+
+            // --- 7. MAIN UPDATE FUNCTION ---
+            function update(source) {
+                const treeLayout = d3.tree().size([height - 100, width - 400]);
+                const treeData = treeLayout(root);
+                const nodes = treeData.descendants();
+                const links = treeData.links();
+
+                nodes.forEach(d => { d.y = d.depth * 250; });
+
+                const node = g.selectAll('g.node')
+                    .data(nodes, d => d.id || (d.id = ++i));
+
+                const nodeEnter = node.enter().append('g')
+                    .attr('class', d => 'node' + (d._children ? ' collapsed' : ''))
+                    .attr('transform', d => `translate(${source.y0}, ${source.x0})`)
+                    .on('click', click);
+
+                nodeEnter.append('foreignObject')
+                    .attr('width', 180)
+                    .attr('height', 50)
+                    .attr('x', -90)
+                    .attr('y', -25)
+                    .append('xhtml:div')
+                    .html(d => d.data.name);
+
+                const nodeUpdate = nodeEnter.merge(node);
+
+                nodeUpdate.transition()
+                    .duration(duration)
+                    .attr('transform', d => `translate(${d.y}, ${d.x})`)
+                    .attr('class', d => 'node' + (d._children ? ' collapsed' : ''));
+
+                const nodeExit = node.exit().transition()
+                    .duration(duration)
+                    .attr('transform', d => `translate(${source.y}, ${source.x})`)
+                    .remove();
+
+                const link = g.selectAll('path.link')
+                    .data(links, d => d.target.id);
+
+                const linkEnter = link.enter().insert('path', 'g')
+                    .attr('class', 'link')
+                    .attr('d', d => {
+                        const o = {x: source.x0, y: source.y0};
+                        return diagonal(o, o);
+                    });
+
+                const linkUpdate = linkEnter.merge(link);
+
+                linkUpdate.transition()
+                    .duration(duration)
+                    .attr('d', d => diagonal(d.source, d.target));
+
+                link.exit().transition()
+                    .duration(duration)
+                    .attr('d', d => {
+                        const o = {x: source.x, y: source.y};
+                        return diagonal(o, o);
+                    })
+                    .remove();
+
+                nodes.forEach(d => {
+                    d.x0 = d.x;
+                    d.y0 = d.y;
+                });
+            }
+
+            function diagonal(s, d) {
+                return `M ${s.y} ${s.x}
+                        C ${(s.y + d.y) / 2} ${s.x},
+                          ${(s.y + d.y) / 2} ${d.x},
+                          ${d.y} ${d.x}`;
+            }
+        });
+    </script>
+</body>
+</html>
