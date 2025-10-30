@@ -1,20 +1,25 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. SETUP & DIMENSIONS ---
+    // --- 1. SETUP & CONFIGURATION ---
     const container = d3.select('#chart-container');
+    const tooltip = d3.select('.tooltip');
+    const controls = d3.select('.controls');
+    
     const width = window.innerWidth;
-    const height = window.innerHeight;
-    let i = 0; // A counter to give nodes a unique ID if they don't have one
-    const duration = 750; // Transition duration
-    let root; // To store the root of the hierarchy
+    const height = window.innerHeight - 70; // Adjust for header height
 
-    // Create the SVG element
+    let i = 0;
+    const duration = 750;
+    const root;
+
+    // Color scale for nodes based on depth
+    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+
+    // --- 2. SVG & ZOOM SETUP ---
     const svg = container.append('svg')
         .attr('viewBox', `0 0 ${width} ${height}`);
 
-    // Create a group element to hold the mindmap, which we will zoom/pan
     const g = svg.append('g');
 
-    // --- 2. ZOOM & PAN BEHAVIOR ---
     const zoom = d3.zoom()
         .scaleExtent([0.2, 4])
         .on('zoom', (event) => {
@@ -23,17 +28,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     svg.call(zoom);
 
-    // --- 3. DATA LOADING & TRANSFORMATION ---
+    // --- 3. DATA LOADING & INITIAL RENDER ---
     d3.xml('data/mindmap.xml')
         .then(data => {
             d3.select('#loading-message').style('display', 'none');
             const xmlRoot = data.querySelector('mindmap > node');
 
-            // Recursive function to transform XML nodes
             function xmlToHierarchy(xmlNode) {
                 const children = Array.from(xmlNode.children).map(child => xmlToHierarchy(child));
                 return {
-                    id: xmlNode.getAttribute('id'), // Use the ID from XML
+                    id: xmlNode.getAttribute('id'),
                     name: xmlNode.getAttribute('text'),
                     children: children.length ? children : null
                 };
@@ -44,9 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
             root.x0 = height / 2;
             root.y0 = 0;
 
-            // Initially collapse all nodes except the first level
+            // Initial state: collapse all but the first level
             root.children.forEach(collapse);
-
             update(root);
         })
         .catch(error => {
@@ -54,9 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
             d3.select('#loading-message').text('Failed to load mindmap data.');
         });
 
-    // --- 4. CORE INTERACTIVE FUNCTIONS ---
+    // --- 4. UI CONTROLS ---
+    controls.select('#reset-zoom').on('click', () => {
+        svg.transition().duration(750).call(
+            zoom.transform,
+            d3.zoomIdentity
+        );
+    });
 
-    // Collapse function
+    // --- 5. CORE INTERACTIVE FUNCTIONS ---
     function collapse(d) {
         if (d.children) {
             d._children = d.children;
@@ -65,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Click handler to toggle children
     function click(event, d) {
         if (d.children) {
             d._children = d.children;
@@ -77,50 +85,65 @@ document.addEventListener('DOMContentLoaded', () => {
         update(d);
     }
 
-    // The main update function
+    function showTooltip(event, d) {
+        const fullText = d.data.name;
+        const displayText = fullText.length > 25 ? fullText.substring(0, 22) + '...' : fullText;
+        
+        if (fullText !== displayText) {
+            tooltip.transition().duration(200).style('opacity', .9);
+            tooltip.html(fullText)
+                .style('left', (event.pageX + 10) + 'px')
+                .style('top', (event.pageY - 28) + 'px');
+        }
+    }
+
+    function hideTooltip() {
+        tooltip.transition().duration(500).style('opacity', 0);
+    }
+
+    // --- 6. MAIN UPDATE FUNCTION ---
     function update(source) {
-        // Assigns the x and y position for the nodes
         const treeLayout = d3.tree().size([height - 100, width - 200]);
         const treeData = treeLayout(root);
         const nodes = treeData.descendants();
         const links = treeData.links();
 
-        // Normalize for fixed-depth
         nodes.forEach(d => { d.y = d.depth * 250; });
 
-        // --- NODES UPDATE ---
+        // --- NODES ---
         const node = g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++i));
 
-        // Enter any new nodes at the parent's previous position.
         const nodeEnter = node.enter().append('g')
-            .attr('class', d => 'node' + (d._children || d.children ? '' : ' leaf'))
+            .attr('class', 'node')
             .attr('transform', d => `translate(${source.y0}, ${source.x0})`)
-            .on('click', click);
+            .on('click', click)
+            .on('mouseover', showTooltip)
+            .on('mouseout', hideTooltip);
 
         nodeEnter.append('circle')
-            .attr('r', 1e-6); // Start with a radius of 0 for animation
+            .attr('r', 1e-6);
 
         nodeEnter.append('text')
             .attr('dy', '.35em')
             .attr('x', d => d.children || d._children ? -13 : 13)
             .attr('text-anchor', d => d.children || d._children ? 'end' : 'start')
-            .text(d => d.data.name);
+            .text(d => {
+                const name = d.data.name;
+                return name.length > 25 ? name.substring(0, 22) + '...' : name;
+            });
 
-        // Transition nodes to their new position.
         const nodeUpdate = nodeEnter.merge(node);
 
         nodeUpdate.transition()
             .duration(duration)
             .attr('transform', d => `translate(${d.y}, ${d.x})`);
 
-        // Update the node attributes and style
         nodeUpdate.select('circle')
             .attr('r', 8)
-            .style('fill', d => d._children ? '#ffc107' : '#fff') // Fill yellow if collapsed
-            .attr('cursor', 'pointer');
+            .style('fill', d => d._children ? getComputedStyle(document.documentElement).getPropertyValue('--collapsed-fill') : colorScale(d.depth))
+            .style('stroke', d => d._children ? getComputedStyle(document.documentElement).getPropertyValue('--collapsed-fill') : getComputedStyle(document.documentElement).getPropertyValue('--node-stroke'));
 
-        // Remove any exiting nodes
         const nodeExit = node.exit().transition()
             .duration(duration)
             .attr('transform', d => `translate(${source.y}, ${source.x})`)
@@ -129,11 +152,10 @@ document.addEventListener('DOMContentLoaded', () => {
         nodeExit.select('circle').attr('r', 1e-6);
         nodeExit.select('text').style('fill-opacity', 1e-6);
 
-        // --- LINKS UPDATE ---
+        // --- LINKS ---
         const link = g.selectAll('path.link')
             .data(links, d => d.target.id);
 
-        // Enter any new links at the parent's previous position.
         const linkEnter = link.enter().insert('path', 'g')
             .attr('class', 'link')
             .attr('d', d => {
@@ -141,14 +163,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return diagonal(o, o);
             });
 
-        // Transition links to their new position.
         const linkUpdate = linkEnter.merge(link);
 
         linkUpdate.transition()
             .duration(duration)
             .attr('d', d => diagonal(d.source, d.target));
 
-        // Remove any exiting links
         link.exit().transition()
             .duration(duration)
             .attr('d', d => {
@@ -157,19 +177,16 @@ document.addEventListener('DOMContentLoaded', () => {
             })
             .remove();
 
-        // Store the old positions for transition.
         nodes.forEach(d => {
             d.x0 = d.x;
             d.y0 = d.y;
         });
     }
 
-    // Creates a curved (diagonal) path from parent to the child nodes
     function diagonal(s, d) {
-        const path = `M ${s.y} ${s.x}
+        return `M ${s.y} ${s.x}
                 C ${(s.y + d.y) / 2} ${s.x},
                   ${(s.y + d.y) / 2} ${d.x},
                   ${d.y} ${d.x}`;
-        return path;
     }
 });
