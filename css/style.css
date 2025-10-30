@@ -1,19 +1,17 @@
 /* --- 1. DESIGN SYSTEM (CSS Variables) --- */
 :root {
-    --bg-color: #0f0f23; /* Deep space blue */
-    --surface-color: #1a1a2e; /* Slightly lighter surface */
-    --primary-color: #00d9ff; /* Bright cyan */
-    --text-color: #e0e0e0;
-    --text-muted: #a0a0a0;
-    --link-color: #3a3a5a;
-    --node-fill: #1a1a2e;
-    --node-stroke: #00d9ff;
-    --collapsed-fill: #ff6b6b; /* Coral red for collapsed nodes */
-    --font-family: 'Inter', sans-serif;
+    --bg-color: #0d1117; /* GitHub's dark */
+    --surface-color: #161b22;
+    --primary-color: #58a6ff;
+    --text-color: #c9d1d9;
+    --text-muted: #8b949e;
+    --link-color: #30363d;
+    --border-color: #21262d;
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 /* --- 2. GLOBAL & LAYOUT STYLES --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
 
 body, html {
     margin: 0;
@@ -29,7 +27,7 @@ body, html {
 header {
     padding: 1rem 2rem;
     background-color: var(--surface-color);
-    border-bottom: 1px solid var(--link-color);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -40,7 +38,7 @@ header {
 header h1 {
     margin: 0;
     font-size: 1.5rem;
-    font-weight: 700;
+    font-weight: 600;
     color: var(--primary-color);
 }
 
@@ -54,7 +52,7 @@ header p {
 main {
     position: relative;
     width: 100%;
-    height: calc(100vh - 70px); /* Full height minus header */
+    height: calc(100vh - 70px);
 }
 
 #chart-container {
@@ -75,12 +73,12 @@ main {
 .controls {
     position: absolute;
     bottom: 2rem;
-    right: 2rem;
+    left: 2rem; /* Moved to left for better balance */
     background-color: var(--surface-color);
-    border: 1px solid var(--link-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     z-index: 5;
 }
 
@@ -89,67 +87,78 @@ main {
     color: var(--bg-color);
     border: none;
     padding: 0.7rem 1.2rem;
-    border-radius: 5px;
+    border-radius: 6px;
     font-family: var(--font-family);
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s ease, transform 0.1s ease;
+    margin-right: 0.5rem;
+}
+
+.controls button:last-child {
+    margin-right: 0;
 }
 
 .controls button:hover {
-    background-color: #00a8cc;
+    background-color: #79c0ff;
 }
 
 .controls button:active {
     transform: scale(0.98);
 }
 
-/* --- 4. TOOLTIP --- */
-.tooltip {
-    position: absolute;
-    padding: 10px;
-    background: rgba(26, 26, 46, 0.95);
-    border: 1px solid var(--primary-color);
-    border-radius: 5px;
-    pointer-events: none;
-    font-size: 0.9rem;
-    opacity: 0;
-    transition: opacity 0.2s;
-    z-index: 100;
-}
-
-/* --- 5. SVG & MINDMAP STYLES --- */
+/* --- 4. SVG & MINDMAP STYLES --- */
 svg {
     width: 100%;
     height: 100%;
     background-color: var(--bg-color);
 }
 
-.node circle {
-    cursor: pointer;
-    stroke-width: 2px;
-    transition: all 0.3s ease;
-    filter: drop-shadow(0px 0px 3px rgba(0, 0, 0, 0.5));
-}
-
-.node circle:hover {
-    filter: drop-shadow(0px 0px 8px var(--primary-color));
-    stroke-width: 3px;
-}
-
-.node text {
-    font-size: 12px;
-    font-family: var(--font-family);
-    text-anchor: middle;
-    dominant-baseline: middle;
-    pointer-events: none;
-    user-select: none;
-    fill: var(--text-color);
-}
+/* Define gradients for nodes */
+.node-gradient-0 { stop-color: #58a6ff; }
+.node-gradient-1 { stop-color: #a371f7; }
+.node-gradient-2 { stop-color: #ffa657; }
+.node-gradient-3 { stop-color: #7ee787; }
+.node-gradient-4 { stop-color: #ff7b72; }
 
 .link {
     fill: none;
     stroke: var(--link-color);
+    stroke-width: 2px;
+}
+
+/* Node styles */
+.node {
+    cursor: pointer;
+}
+
+.node rect {
+    fill: url(#node-gradient-1); /* Default gradient */
+    stroke: var(--border-color);
     stroke-width: 1.5px;
-    transition: stroke 0.3s ease;
+    rx: 8; /* Rounded corners */
+    ry: 8;
+    filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.4));
+    transition: all 0.3s ease;
+}
+
+.node.collapsed rect {
+    fill: url(#node-gradient-0); /* Highlight collapsed nodes */
+}
+
+.node:hover rect {
+    filter: drop-shadow(0px 6px 12px rgba(88, 166, 255, 0.4));
+    stroke: var(--primary-color);
+}
+
+/* Styling for the HTML inside the foreignObject */
+.node div {
+    padding: 8px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--text-color);
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word;
+    width: 160px; /* Fixed width for consistent node size */
 }
