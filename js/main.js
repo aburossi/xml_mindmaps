@@ -11,8 +11,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let root;
 
     // Node Dimensions
-    const nodeWidth = 220; // Wider boxes
-    const baseHeight = 60; // Minimum height
+    const nodeWidth = 220;
+    const baseHeight = 60;
+
+    // --- NEW: COLOR PALETTE ---
+    // Blue, Purple, Orange, Green, Red, Cyan, Pink, Yellow
+    const palette = [
+        '#58a6ff', // Blue
+        '#bc8cff', // Purple
+        '#ffa657', // Orange
+        '#7ee787', // Green
+        '#ff7b72', // Red
+        '#39c5cf', // Cyan
+        '#ff9bce', // Pink
+        '#d29922'  // Yellow
+    ];
 
     // --- 2. URL PARAMETER HANDLING ---
     const urlParams = new URLSearchParams(window.location.search);
@@ -41,6 +54,20 @@ document.addEventListener('DOMContentLoaded', () => {
         root.x0 = height / 2;
         root.y0 = width / 2;
 
+        // --- NEW: ASSIGN COLORS ---
+        // 1. Root gets a neutral color (or white)
+        root.data.color = '#c9d1d9'; 
+
+        // 2. Assign palette colors to first generation and inherit down
+        if (root.children) {
+            root.children.forEach((child, index) => {
+                // Cycle through palette
+                const branchColor = palette[index % palette.length];
+                assignColorRecursive(child, branchColor);
+            });
+        }
+
+        // Initial Collapse
         if (root.children) {
             root.children.forEach(collapseChildren);
         }
@@ -53,6 +80,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- 5. HELPER FUNCTIONS ---
+    
+    // NEW: Recursive Color Assignment
+    function assignColorRecursive(node, color) {
+        node.data.color = color;
+        if (node.children) {
+            node.children.forEach(c => assignColorRecursive(c, color));
+        }
+        // Also handle hidden children if data was pre-collapsed (rare in this setup but good practice)
+        if (node._children) {
+            node._children.forEach(c => assignColorRecursive(c, color));
+        }
+    }
+
     function collapseChildren(d) {
         if (d.children) {
             d._children = d.children;
@@ -79,19 +119,15 @@ document.addEventListener('DOMContentLoaded', () => {
         );
     }
 
-    // Helper to estimate height based on text length
     function getNodeHeight(d) {
-        // Approx 28 chars per line for a 220px width
         const charsPerLine = 28; 
         const textLength = d.data.name.length;
         const lines = Math.ceil(textLength / charsPerLine);
-        // 20px padding + 18px per line. Min height is baseHeight
         return Math.max(baseHeight, 20 + (lines * 18));
     }
 
     // --- 6. UPDATE FUNCTION ---
     function update(source) {
-        // Increased vertical spacing (100) to accommodate taller nodes
         const treeLayout = d3.tree().nodeSize([100, 300]); 
         const treeData = treeLayout(root);
         const nodes = treeData.descendants();
@@ -101,89 +137,83 @@ document.addEventListener('DOMContentLoaded', () => {
         const node = g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++i));
 
-        // Enter
         const nodeEnter = node.enter().append('g')
             .attr('class', 'node')
             .attr('transform', d => `translate(${source.y0},${source.x0})`)
             .on('click', clickNode);
 
-        // 1. Node Rectangle (Dynamic Height)
+        // 1. Node Rectangle
         nodeEnter.append('rect')
             .attr('width', nodeWidth)
             .attr('rx', 6)
-            .attr('ry', 6);
+            .attr('ry', 6)
+            .style('stroke-width', '1.5px'); // Moved stroke width here
 
         // 2. Node Text
         nodeEnter.append('foreignObject')
-            .attr('width', nodeWidth - 35) // Leave space for icons
+            .attr('width', nodeWidth - 35)
             .append('xhtml:div')
             .html(d => d.data.name);
 
-        // 3. Icons Container
-        const iconsGroup = nodeEnter.append('g')
-            .attr('class', 'icons-group');
+        // 3. Icons
+        const iconsGroup = nodeEnter.append('g').attr('class', 'icons-group');
 
-        // --- LINK ICON ---
         const linkIcon = iconsGroup.filter(d => d.data.link && d.data.link.trim() !== "")
-            .append('g')
-            .attr('class', 'node-icon')
+            .append('g').attr('class', 'node-icon')
             .on('click', (event, d) => {
                 event.stopPropagation();
                 window.open(d.data.link, '_blank');
             });
-        
         linkIcon.append('path')
             .attr('d', "M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z")
             .attr('transform', 'scale(0.8)');
 
-        // --- INFO ICON ---
         const infoIcon = iconsGroup.filter(d => d.data.description && d.data.description.trim() !== "")
-            .append('g')
-            .attr('class', 'node-icon')
+            .append('g').attr('class', 'node-icon')
             .on('click', (event, d) => {
                 event.stopPropagation();
                 openModal(d.data.name, d.data.description);
             });
-
         infoIcon.append('path')
             .attr('d', "M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z")
             .attr('transform', 'scale(0.8)');
 
-
-        // --- UPDATE TRANSITIONS (Dynamic Sizing) ---
+        // --- UPDATE TRANSITIONS ---
         const nodeUpdate = nodeEnter.merge(node);
         
         nodeUpdate.transition().duration(duration)
             .attr('transform', d => `translate(${d.y},${d.x})`);
 
-        // Update Rect Size & Position
+        // --- NEW: APPLY DYNAMIC COLORS ---
         nodeUpdate.select('rect')
             .attr('height', d => getNodeHeight(d))
-            .attr('y', d => -getNodeHeight(d) / 2) // Center vertically
-            .attr('x', -nodeWidth / 2) // Center horizontally
+            .attr('y', d => -getNodeHeight(d) / 2)
+            .attr('x', -nodeWidth / 2)
             .attr('class', d => d._children ? 'collapsed' : '')
-            .style('fill', d => d._children ? '#238636' : '#1f2428');
+            // Logic: 
+            // 1. Stroke is always the branch color.
+            // 2. If collapsed, Fill is the branch color.
+            // 3. If expanded, Fill is dark (#1f2428).
+            .style('stroke', d => d.data.color) 
+            .style('fill', d => d._children ? d.data.color : '#1f2428');
 
-        // Update Text Size & Position
+        // Update Text Color (If collapsed and filled with bright color, maybe make text black? 
+        // For now, keeping it white/grey usually works with these colors, but let's keep it standard)
         nodeUpdate.select('foreignObject')
             .attr('height', d => getNodeHeight(d))
             .attr('y', d => -getNodeHeight(d) / 2)
-            .attr('x', (-nodeWidth / 2) + 5); // Padding left
+            .attr('x', (-nodeWidth / 2) + 5)
+            .select('div')
+            .style('color', d => d._children ? '#0d1117' : '#c9d1d9'); // Dark text if collapsed (filled), Light if expanded
 
-        // Update Icons Position (Top Right corner of the box)
+        // Update Icons
         nodeUpdate.select('.icons-group')
-            .attr('transform', d => {
-                const h = getNodeHeight(d);
-                // Position at top-right inside the box
-                return `translate(${(nodeWidth/2) - 25}, ${(-h/2) + 10})`; 
-            });
+            .attr('transform', d => `translate(${(nodeWidth/2) - 25}, ${(-getNodeHeight(d)/2) + 10})`);
         
-        // Stack icons if both exist
         nodeUpdate.selectAll('.node-icon')
-            .attr('transform', (d, i) => `translate(0, ${i * 20})`);
+            .attr('transform', (d, i) => `translate(0, ${i * 20})`)
+            .style('fill', d => d._children ? '#0d1117' : '#8b949e'); // Adjust icon color based on background
 
-
-        // Exit
         const nodeExit = node.exit().transition().duration(duration)
             .attr('transform', d => `translate(${source.y},${source.x})`)
             .remove();
