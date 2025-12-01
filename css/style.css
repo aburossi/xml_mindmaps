@@ -50,38 +50,34 @@ button:hover { opacity: 0.9; }
 .node { cursor: pointer; }
 
 .node rect {
-    fill: #1f2428;
-    stroke: var(--primary-color);
-    stroke-width: 1.5px;
+    /* REMOVED: fill, stroke, stroke-width (now handled in JS) */
     rx: 6; ry: 6;
     transition: all 0.3s;
 }
 
-.node.collapsed rect {
-    fill: var(--secondary-color);
-    stroke: #2ea043;
-}
+/* REMOVED: .node.collapsed rect style (now handled in JS) */
 
 .node:hover rect {
-    stroke: #fff;
-    filter: drop-shadow(0 0 8px rgba(88, 166, 255, 0.4));
+    /* Instead of changing stroke color, we add a glow effect */
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.4));
+    stroke-width: 2.5px !important; /* Make border thicker on hover */
 }
 
 /* Text inside node */
 .node div {
     display: flex;
-    align-items: center; /* Vertically center */
-    justify-content: flex-start; /* Left align text */
+    align-items: center;
+    justify-content: flex-start;
     text-align: left;
     width: 100%;
     height: 100%;
-    padding: 0 5px; /* Padding inside the text area */
+    padding: 0 5px;
     box-sizing: border-box;
     font-size: 12px;
     line-height: 1.3;
-    color: var(--text-color);
+    /* REMOVED: color (now handled in JS to contrast with background) */
     pointer-events: none;
-    word-wrap: break-word; /* Ensure long words break */
+    word-wrap: break-word;
 }
 
 .link { fill: none; stroke: var(--border-color); stroke-width: 1.5px; }
@@ -89,10 +85,10 @@ button:hover { opacity: 0.9; }
 /* --- 5. NODE ICONS --- */
 .node-icon {
     cursor: pointer;
-    fill: var(--text-muted); /* Muted color by default */
+    /* REMOVED: fill (now handled in JS) */
     transition: fill 0.2s;
 }
-.node-icon:hover { fill: #fff; }
+.node-icon:hover { fill: #fff !important; }
 
 /* --- 6. MODAL (POPUP) --- */
 .modal {
