@@ -1,164 +1,133 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 1. SETUP & CONFIGURATION ---
+    // --- 1. CONFIGURATION ---
     const container = d3.select('#chart-container');
     const tooltip = d3.select('.tooltip');
-    const controls = d3.select('.controls');
-
-    const width = window.innerWidth;
-    const height = window.innerHeight - 70; // Adjust for header
-
+    const width = container.node().getBoundingClientRect().width;
+    const height = container.node().getBoundingClientRect().height;
+    const duration = 500;
     let i = 0;
-    const duration = 750;
     let root;
-    const zoom = d3.zoom();
 
-    // --- 2. SVG & ZOOM SETUP ---
+    // --- 2. URL PARAMETER HANDLING ---
+    const urlParams = new URLSearchParams(window.location.search);
+    // Default to 'Steuern_in_der_Schweiz' if no ?map= parameter is present
+    const mapName = urlParams.get('map') || 'Steuern_in_der_Schweiz';
+    const dataUrl = `data/${mapName}.json`;
+
+    // --- 3. SVG SETUP ---
     const svg = container.append('svg')
-        .attr('viewBox', `0 0 ${width} ${height}`);
-
-    // Define gradients for nodes
-    const defs = svg.append('defs');
-    const gradients = ['#58a6ff', '#a371f7', '#ffa657', '#7ee787', '#ff7b72'];
-    gradients.forEach((color, i) => {
-        const gradient = defs.append('linearGradient')
-            .attr('id', `node-gradient-${i}`)
-            .attr('x1', '0%').attr('y1', '0%')
-            .attr('x2', '100%').attr('y2', '100%');
-        gradient.append('stop').attr('offset', '0%').style('stop-color', color).style('stop-opacity', 0.8);
-        gradient.append('stop').attr('offset', '100%').style('stop-color', color).style('stop-opacity', 0.4);
-    });
+        .attr('viewBox', `0 0 ${width} ${height}`)
+        .attr('preserveAspectRatio', 'xMidYMid slice');
 
     const g = svg.append('g');
 
-    zoom.scaleExtent([0.3, 3]).on('zoom', (event) => {
-        g.attr('transform', event.transform);
-    });
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 4])
+        .on('zoom', (event) => g.attr('transform', event.transform));
+
     svg.call(zoom);
 
-    // --- 3. DATA LOADING & INITIAL RENDER ---
-    d3.xml('data/mindmap.xml')
-        .then(data => {
-            d3.select('#loading-message').style('display', 'none');
-            const xmlRoot = data.querySelector('mindmap > node');
+    // --- 4. DATA LOADING ---
+    d3.json(dataUrl).then(data => {
+        d3.select('#loading-message').style('display', 'none');
+        d3.select('#map-title').text(data.name.replace(/_/g, ' '));
 
-            function xmlToHierarchy(xmlNode) {
-                const children = Array.from(xmlNode.children).map(child => xmlToHierarchy(child));
-                return {
-                    id: xmlNode.getAttribute('id'),
-                    name: xmlNode.getAttribute('text'),
-                    children: children.length ? children : null
-                };
-            }
+        root = d3.hierarchy(data);
+        root.x0 = height / 2;
+        root.y0 = width / 2;
 
-            const hierarchyData = xmlToHierarchy(xmlRoot);
-            root = d3.hierarchy(hierarchyData);
-            root.x0 = height / 2;
-            root.y0 = width / 2; // Center the root
+        // Initial Collapse: Keep root and 1st generation open, collapse the rest
+        if (root.children) {
+            root.children.forEach(collapseChildren);
+        }
 
-            // Initial state: collapse all but the first level
-            root.children.forEach(collapse);
-            update(root);
-            centerNode(root); // Center the view on the root initially
-        })
-        .catch(error => {
-            console.error('Error loading or parsing XML:', error);
-            d3.select('#loading-message').text('Failed to load mindmap data.');
-        });
-
-    // --- 4. UI CONTROLS ---
-    controls.select('#reset-zoom').on('click', () => {
-        centerNode(root);
-    });
-    
-    controls.select('#expand-all').on('click', () => {
-        expand(root);
         update(root);
         centerNode(root);
+    }).catch(err => {
+        console.error(err);
+        d3.select('#loading-message').text(`Error loading: ${dataUrl}`);
     });
 
-    // --- 5. CORE INTERACTIVE FUNCTIONS ---
-    function collapse(d) {
+    // --- 5. HELPER FUNCTIONS ---
+    function collapseChildren(d) {
         if (d.children) {
             d._children = d.children;
-            d._children.forEach(collapse);
+            d._children.forEach(collapseChildren);
             d.children = null;
         }
     }
 
-    function expand(d) {
+    function expandChildren(d) {
         if (d._children) {
             d.children = d._children;
-            d.children.forEach(expand);
+            d.children.forEach(expandChildren);
             d._children = null;
         }
-    }
-
-    function click(event, d) {
-        if (d.children) {
-            d._children = d.children;
-            d.children = null;
-        } else {
-            d.children = d._children;
-            d._children = null;
-        }
-        update(d);
-        centerNode(d); // Focus and zoom on the clicked node
     }
 
     function centerNode(source) {
-        const scale = zoom.scaleExtent()[1]; // Zoom in
-        const translate = [width / 2 - source.y0 * scale, height / 2 - source.x0 * scale];
+        const scale = d3.zoomTransform(svg.node()).k;
+        const x = -source.y0 * scale + width / 2;
+        const y = -source.x0 * scale + height / 2;
         svg.transition().duration(duration).call(
-            zoom.transform,
-            d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+            zoom.transform, 
+            d3.zoomIdentity.translate(x, y).scale(scale)
         );
     }
 
-    // --- 6. MAIN UPDATE FUNCTION ---
+    // --- 6. UPDATE FUNCTION (The Core) ---
     function update(source) {
-        // Use a tree layout for a top-down structure
-        const treeLayout = d3.tree().size([height - 100, width - 400]);
+        const treeLayout = d3.tree().nodeSize([60, 250]); // [Height, Width] between nodes
         const treeData = treeLayout(root);
         const nodes = treeData.descendants();
         const links = treeData.links();
 
-        // Normalize for fixed-depth
-        nodes.forEach(d => { d.y = d.depth * 250; });
-
-        // --- NODES UPDATE ---
+        // --- NODES ---
         const node = g.selectAll('g.node')
             .data(nodes, d => d.id || (d.id = ++i));
 
+        // Enter
         const nodeEnter = node.enter().append('g')
-            .attr('class', d => 'node' + (d._children ? ' collapsed' : ''))
-            .attr('transform', d => `translate(${source.y0}, ${source.x0})`)
-            .on('click', click);
+            .attr('class', 'node')
+            .attr('transform', d => `translate(${source.y0},${source.x0})`)
+            .on('click', click)
+            .on('mouseover', showTooltip)
+            .on('mouseout', hideTooltip);
 
-        // Use foreignObject to render HTML inside SVG
-        nodeEnter.append('foreignObject')
+        // Node Rectangle
+        nodeEnter.append('rect')
             .attr('width', 180)
             .attr('height', 50)
-            .attr('x', -90) // Center the foreignObject
+            .attr('x', -90)
             .attr('y', -25)
+            .attr('rx', 6)
+            .attr('ry', 6);
+
+        // Node Text (ForeignObject for wrapping)
+        nodeEnter.append('foreignObject')
+            .attr('width', 170)
+            .attr('height', 46)
+            .attr('x', -85)
+            .attr('y', -23)
             .append('xhtml:div')
-            .attr('class', 'node-text-content')
             .html(d => d.data.name);
 
-        // Transition nodes to their new position.
+        // Update
         const nodeUpdate = nodeEnter.merge(node);
+        
+        nodeUpdate.transition().duration(duration)
+            .attr('transform', d => `translate(${d.y},${d.x})`);
 
-        nodeUpdate.transition()
-            .duration(duration)
-            .attr('transform', d => `translate(${d.y}, ${d.x})`)
-            .attr('class', d => 'node' + (d._children ? ' collapsed' : ''));
+        nodeUpdate.select('rect')
+            .attr('class', d => d._children ? 'collapsed' : '')
+            .style('fill', d => d._children ? '#238636' : '#1f2428'); // Visual cue for collapsed
 
-        // Remove any exiting nodes
-        const nodeExit = node.exit().transition()
-            .duration(duration)
-            .attr('transform', d => `translate(${source.y}, ${source.x})`)
+        // Exit
+        const nodeExit = node.exit().transition().duration(duration)
+            .attr('transform', d => `translate(${source.y},${source.x})`)
             .remove();
 
-        // --- LINKS UPDATE ---
+        // --- LINKS ---
         const link = g.selectAll('path.link')
             .data(links, d => d.target.id);
 
@@ -170,31 +139,77 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
         const linkUpdate = linkEnter.merge(link);
-
-        linkUpdate.transition()
-            .duration(duration)
+        linkUpdate.transition().duration(duration)
             .attr('d', d => diagonal(d.source, d.target));
 
-        link.exit().transition()
-            .duration(duration)
+        link.exit().transition().duration(duration)
             .attr('d', d => {
                 const o = {x: source.x, y: source.y};
                 return diagonal(o, o);
             })
             .remove();
 
-        // Store the old positions for transition.
+        // Store old positions
         nodes.forEach(d => {
             d.x0 = d.x;
             d.y0 = d.y;
         });
     }
 
-    // Creates a curved (diagonal) path from parent to the child nodes
+    // --- 7. INTERACTION HANDLERS ---
+    function click(event, d) {
+        // If there is a link, open it (optional logic)
+        if (d.data.link && d.data.link.trim() !== "") {
+            window.open(d.data.link, '_blank');
+            return; 
+        }
+
+        // Otherwise toggle children
+        if (d.children) {
+            d._children = d.children;
+            d.children = null;
+        } else {
+            d.children = d._children;
+            d._children = null;
+        }
+        update(d);
+        centerNode(d);
+    }
+
+    function showTooltip(event, d) {
+        // Only show if description exists and is not empty
+        if (d.data.description && d.data.description.trim() !== "") {
+            tooltip.transition().duration(200).style('opacity', 1);
+            tooltip.html(`<strong>${d.data.name}</strong>${d.data.description}`)
+                .style('left', (event.pageX + 15) + 'px')
+                .style('top', (event.pageY - 28) + 'px');
+        }
+    }
+
+    function hideTooltip() {
+        tooltip.transition().duration(500).style('opacity', 0);
+    }
+
     function diagonal(s, d) {
         return `M ${s.y} ${s.x}
                 C ${(s.y + d.y) / 2} ${s.x},
                   ${(s.y + d.y) / 2} ${d.x},
                   ${d.y} ${d.x}`;
     }
+
+    // --- 8. BUTTON CONTROLS ---
+    d3.select('#reset-zoom').on('click', () => centerNode(root));
+    
+    d3.select('#expand-all').on('click', () => {
+        if(root._children) { root.children = root._children; root._children = null; }
+        root.descendants().forEach(expandChildren);
+        update(root);
+        centerNode(root);
+    });
+
+    d3.select('#collapse-all').on('click', () => {
+        root.children.forEach(collapseChildren);
+        update(root);
+        centerNode(root);
+    });
 });
