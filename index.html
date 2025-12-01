@@ -26,12 +26,28 @@
         </div>
     </main>
 
-    <!-- POPUP MODAL (Hidden by default) -->
+    <!-- 1. TEXT INFO MODAL -->
     <div id="info-modal" class="modal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2 id="modal-title">Title</h2>
             <div id="modal-body">Description goes here...</div>
+        </div>
+    </div>
+
+    <!-- 2. NEW: LINK PREVIEW MODAL -->
+    <div id="link-modal" class="modal">
+        <div class="modal-content large-modal">
+            <div class="modal-header">
+                <h2 id="link-title">Web Page</h2>
+                <div class="header-actions">
+                    <a id="external-link-btn" href="#" target="_blank" class="btn-small">Open in New Tab ↗</a>
+                    <span class="close-link-modal">&times;</span>
+                </div>
+            </div>
+            <div class="iframe-wrapper">
+                <iframe id="link-iframe" src="" frameborder="0"></iframe>
+            </div>
         </div>
     </div>
 
