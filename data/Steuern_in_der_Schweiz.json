@@ -1,0 +1,465 @@
+{
+  "name": "Steuern in der Schweiz",
+  "description": "",
+  "link": "",
+  "children": [
+    {
+      "name": "Steuerpflicht",
+      "description": "",
+      "link": "",
+      "children": [
+        {
+          "name": "Steuerpflichtige Personen (Natürliche/Juristische)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Wohnsitz in der Schweiz (31. Dezember)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Liegenschaft oder Geschäftsbetrieb in der Schweiz (Steuerperiode)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Erstmals Steuererklärung",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Erreichen der Volljährigkeit (Ab 18. Altersjahr)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Spezialfälle",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Minderjährige (Vermögen bei Eltern, Einkommen z.T. steuerfrei)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Erwerbstätige ohne Wohnsitz CH (Quellensteuer, direkt vom Lohn)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Gesellschaften/Personen im Ausland (Liegenschaften, Geschäftsbetriebe CH)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Steuererklärung",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Pflicht zur wahrheitsgetreuen/vollständigen Angabe",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Steuerbetrug (Urkundenfaelschung) vs. Steuerhinterziehung (Verschweigen)",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Seite 1: Personalien",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Benötigte Unterlagen (Lohnausweis zwingend)",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Seite 2: Einkommen (Haupteinkünfte, Nebeneinkünfte, Zinsen)",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Aufbau (Schema)",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Seite 3: Abzüge, Vermögenswerte (Reineinkommen, Nettovermögen)",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Steuerhoheit und Steuerarten",
+      "description": "",
+      "link": "",
+      "children": [
+        {
+          "name": "Steuerhoheit (Recht Steuern zu erheben)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Bund",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Seite 4: Sozialabzüge (Steuerbares Einkommen/Vermögen)",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Kantone",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Gemeinden",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Auf Einkommen und Vermögen erhoben",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Direkte Steuern (Abgestuft nach Finanzkraft)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Grundlage",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Basierend auf Steuererklärung",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Quellensteuer (Ausländer ohne Niederlassung C, direkt vom Lohn)",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Wichtige direkte Steuern",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Bund: Einkommenssteuer",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Kantone: Einkommenssteuer, Vermögenssteuer, Erbschaftssteuer, Liegenschaftssteuer",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Kauf von Waren (Verbrauchssteuern)",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Kulturelle Anlässe (Aufwandsteuern)",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Indirekte Steuern (Einheitlicher Steuertarif)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Wichtige indirekte Steuern",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Bestimmte Gegenstände (Besitzsteuern)",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Bund: Mehrwertsteuer (MWST), Tabaksteuer, Mineralölsteuer, LSVA",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Kantone: Motorfahrzeugsteuer, Hundesteuer, Vergnügungssteuer",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Finanzen des Staates",
+      "description": "",
+      "link": "",
+      "children": [
+        {
+          "name": "Zweck (Steuerzwecke)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Fiskalpolitischer Zweck",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Finanzierung Staatsausgaben",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Bsp: Bildung, öffentlicher Verkehr, Militär",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Sozialpolitischer Zweck",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Förderung Wohlfahrt (sozialer Ausgleich)",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Bsp: Spitäler, Fürsorge, Heime",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            },
+            {
+              "name": "Wirtschaftpolitischer Zweck",
+              "description": "",
+              "link": "",
+              "children": [
+                {
+                  "name": "Schutz wirtschaftlicher Interessen (Lenkung)",
+                  "description": "",
+                  "link": ""
+                },
+                {
+                  "name": "Bsp: Subventionen, Zölle, Tabaksteuer",
+                  "description": "",
+                  "link": ""
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Einnahmen (Bund 2022)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Direkte Bundessteuer (Wichtigste)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Mehrwertsteuer (Wichtigste)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Verrechnungssteuer",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Mineralölsteuer",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Ausgaben (Bund 2022)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Soziale Wohlfahrt (Grösster Posten: AHV, IV, Prämienverbilligung)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Finanzen und Steuern",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Verkehr",
+              "description": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Spezialkonzepte",
+      "description": "",
+      "link": "",
+      "children": [
+        {
+          "name": "Steuerprogression",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Ansteigen des Steuersatzes bei steigendem Einkommen/Vermögen",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Ziel: Soziale Gerechtigkeit und Umverteilung",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Gegensatz: Flat Rate Tax (Einheitlicher Steuersatz)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Verrechnungssteuer (VStG)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Mittel zur Verhinderung der Steuerhinterziehung",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "35% Abzug auf Kapitalerträge (Zinsen, Dividenden, Lottogewinne > 1000 Fr.)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Volle Rückerstattung bei Deklaration in Steuererklärung",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Mehrwertsteuer (MWST)",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Verbrauchssteuer auf Waren und Dienstleistungen",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Normalsatz: 7,7 %",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Reduzierter Satz: 2,5 % (Güter des täglichen Bedarfs)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Sondersatz: 3,7 % (Hotels)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Erhebung nur auf den Mehrwert (gestaffelt)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        },
+        {
+          "name": "Verlauf Steuerrechnung",
+          "description": "",
+          "link": "",
+          "children": [
+            {
+              "name": "Verteilung Steuererklärung (Gemeinde)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Kontrolle / Festsetzung (Veranlagungsbehörde)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Eröffnung der Einschätzung (Annahme/Einsprache)",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Erstellen / Verschicken der Steuerrechnung",
+              "description": "",
+              "link": ""
+            },
+            {
+              "name": "Zahlung (Gesamthaft oder Raten)",
+              "description": "",
+              "link": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
