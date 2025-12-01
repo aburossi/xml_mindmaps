@@ -5,7 +5,7 @@
   "children": [
     {
       "name": "Steuerpflicht",
-      "description": "",
+      "description": "Die Steuerpflicht ist die Pflicht steuern zu zahlen",
       "link": "https://www.ch.ch/de/steuern/quellensteuer",
       "children": [
         {
