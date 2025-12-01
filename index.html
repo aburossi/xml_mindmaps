@@ -3,30 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Steuern (Schweiz) - Interactive Mindmap</title>
+    <title>Interactive Mindmap</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <header>
         <div>
-            <h1>Steuern (Schweiz)</h1>
-            <p>An interactive exploration of the Swiss tax system.</p>
+            <h1 id="map-title">Loading...</h1>
+            <p>Interactive Mindmap Visualization</p>
         </div>
     </header>
 
     <main>
         <div id="chart-container">
-            <div id="loading-message">Loading mindmap data...</div>
+            <div id="loading-message">Loading data...</div>
         </div>
+        
+        <!-- Controls -->
         <div class="controls">
-            <button id="reset-zoom">Reset Zoom</button>
+            <button id="reset-zoom">Reset View</button>
+            <button id="expand-all">Expand All</button>
+            <button id="collapse-all">Collapse All</button>
         </div>
+
+        <!-- Tooltip Container -->
         <div class="tooltip"></div>
     </main>
 
     <!-- D3.js Library -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Our Custom Visualization Script -->
+    <!-- Main Script -->
     <script src="js/main.js"></script>
 </body>
 </html>
