@@ -19,20 +19,23 @@
             <div id="loading-message">Loading data...</div>
         </div>
         
-        <!-- Controls -->
         <div class="controls">
             <button id="reset-zoom">Reset View</button>
             <button id="expand-all">Expand All</button>
             <button id="collapse-all">Collapse All</button>
         </div>
-
-        <!-- Tooltip Container -->
-        <div class="tooltip"></div>
     </main>
 
-    <!-- D3.js Library -->
+    <!-- POPUP MODAL (Hidden by default) -->
+    <div id="info-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2 id="modal-title">Title</h2>
+            <div id="modal-body">Description goes here...</div>
+        </div>
+    </div>
+
     <script src="https://d3js.org/d3.v7.min.js"></script>
-    <!-- Main Script -->
     <script src="js/main.js"></script>
 </body>
 </html>
