@@ -6,7 +6,7 @@
     {
       "name": "Steuerpflicht",
       "description": "",
-      "link": "",
+      "link": "https://www.ch.ch/de/steuern/quellensteuer",
       "children": [
         {
           "name": "Steuerpflichtige Personen (Natürliche/Juristische)",
@@ -15,7 +15,7 @@
           "children": [
             {
               "name": "Wohnsitz in der Schweiz (31. Dezember)",
-              "description": "",
+              "description": "Massgebend ist der Aufenthalt mit der Absicht des dauernden Verbleibens am Stichdatum.",
               "link": ""
             },
             {
@@ -28,7 +28,7 @@
         {
           "name": "Erstmals Steuererklärung",
           "description": "",
-          "link": "",
+          "link": "https://www.sv.fin.be.ch/de/start/themen/steuererklaerung/steuererklaerung-ausfuellen-privatpersonen/18-jaehrige-steuererklaerung-ausfuellen.html",
           "children": [
             {
               "name": "Erreichen der Volljährigkeit (Ab 18. Altersjahr)",
@@ -44,13 +44,13 @@
           "children": [
             {
               "name": "Minderjährige (Vermögen bei Eltern, Einkommen z.T. steuerfrei)",
-              "description": "",
+              "description": "Kinder sind nicht selbstständig steuerpflichtig; ihr Vermögen wird steuerlich den Eltern zugerechnet.",
               "link": ""
             },
             {
               "name": "Erwerbstätige ohne Wohnsitz CH (Quellensteuer, direkt vom Lohn)",
               "description": "",
-              "link": ""
+              "link": "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer/dbst-quellensteuer.html"
             },
             {
               "name": "Gesellschaften/Personen im Ausland (Liegenschaften, Geschäftsbetriebe CH)",
@@ -66,13 +66,13 @@
           "children": [
             {
               "name": "Pflicht zur wahrheitsgetreuen/vollständigen Angabe",
-              "description": "",
+              "description": "Wer Einkünfte verschweigt, begeht Steuerhinterziehung; Ehrlichkeit ist gesetzliche Pflicht.",
               "link": ""
             },
             {
               "name": "Steuerbetrug (Urkundenfaelschung) vs. Steuerhinterziehung (Verschweigen)",
               "description": "",
-              "link": "",
+              "link": "https://machs-eifach.ch/wissen2go/was-ist-der-unterschied-zwischen-steuerhinterziehung-und-steuerbetrug/",
               "children": [
                 {
                   "name": "Seite 1: Personalien",
@@ -88,7 +88,7 @@
               "children": [
                 {
                   "name": "Seite 2: Einkommen (Haupteinkünfte, Nebeneinkünfte, Zinsen)",
-                  "description": "",
+                  "description": "Hier werden Löhne, Renten und Kapitalerträge (z.B. Zinsen) deklariert.",
                   "link": ""
                 }
               ]
@@ -100,7 +100,7 @@
               "children": [
                 {
                   "name": "Seite 3: Abzüge, Vermögenswerte (Reineinkommen, Nettovermögen)",
-                  "description": "",
+                  "description": "Abzugsfähig sind u.a. Berufsauslagen, Schuldzinsen und Beiträge an die Säule 3a.",
                   "link": ""
                 }
               ]
@@ -117,11 +117,11 @@
         {
           "name": "Steuerhoheit (Recht Steuern zu erheben)",
           "description": "",
-          "link": "",
+          "link": "https://www.efd.admin.ch/de/schweizer-steuersystem",
           "children": [
             {
               "name": "Bund",
-              "description": "",
+              "description": "Darf nur jene Steuern erheben, zu denen ihn die Bundesverfassung ausdrücklich ermächtigt.",
               "link": "",
               "children": [
                 {
@@ -143,7 +143,7 @@
               "children": [
                 {
                   "name": "Auf Einkommen und Vermögen erhoben",
-                  "description": "",
+                  "description": "Erheben Steuern meist als prozentualen Zuschlag (Steuerfuss) zur einfachen Kantonssteuer.",
                   "link": ""
                 }
               ]
@@ -153,7 +153,7 @@
         {
           "name": "Direkte Steuern (Abgestuft nach Finanzkraft)",
           "description": "",
-          "link": "",
+          "link": "https://www.estv.admin.ch/estv/de/home/direkte-bundessteuer.html",
           "children": [
             {
               "name": "Grundlage",
@@ -219,7 +219,7 @@
                 {
                   "name": "Bund: Mehrwertsteuer (MWST), Tabaksteuer, Mineralölsteuer, LSVA",
                   "description": "",
-                  "link": ""
+                  "link": "https://www.estv.admin.ch/estv/de/home/mehrwertsteuer/mwst-steuersaetze/mwst-steuersaetze-entwicklung.html"
                 },
                 {
                   "name": "Kantone: Motorfahrzeugsteuer, Hundesteuer, Vergnügungssteuer",
@@ -244,7 +244,7 @@
           "children": [
             {
               "name": "Fiskalpolitischer Zweck",
-              "description": "",
+              "description": "Hauptziel: Finanzierung der staatlichen Aufgaben (Schulen, Strassen, Verwaltung).",
               "link": "",
               "children": [
                 {
@@ -318,7 +318,7 @@
             {
               "name": "Mineralölsteuer",
               "description": "",
-              "link": ""
+              "link": "https://www.bazg.admin.ch/dam/bazg/de/dokumente/abgaben/minoest-vorschriften/richtlinie09mla.pdf.download.pdf/20250916-richtlinie-09-mineral%C3%B6lsteuer-und-co2-abgabe-d.pdf"
             }
           ]
         },
@@ -354,11 +354,11 @@
         {
           "name": "Steuerprogression",
           "description": "",
-          "link": "",
+          "link": "https://www.moneyland.ch/de/steuerprogression-definition",
           "children": [
             {
               "name": "Ansteigen des Steuersatzes bei steigendem Einkommen/Vermögen",
-              "description": "",
+              "description": "Bedeutet, dass Besserverdienende nicht nur absolut, sondern auch prozentual mehr Steuern zahlen.",
               "link": ""
             },
             {
@@ -376,7 +376,7 @@
         {
           "name": "Verrechnungssteuer (VStG)",
           "description": "",
-          "link": "",
+          "link": "https://www.estv.admin.ch/estv/de/home/verrechnungssteuer.html",
           "children": [
             {
               "name": "Mittel zur Verhinderung der Steuerhinterziehung",
@@ -385,7 +385,7 @@
             },
             {
               "name": "35% Abzug auf Kapitalerträge (Zinsen, Dividenden, Lottogewinne > 1000 Fr.)",
-              "description": "",
+              "description": "Sicherungssteuer, die Banken direkt an den Staat abliefern, bevor der Zins gutgeschrieben wird.",
               "link": ""
             },
             {
@@ -402,7 +402,7 @@
           "children": [
             {
               "name": "Verbrauchssteuer auf Waren und Dienstleistungen",
-              "description": "",
+              "description": "Wird auf dem Konsum erhoben und vom Endkonsumenten getragen.",
               "link": ""
             },
             {
